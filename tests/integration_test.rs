@@ -14,8 +14,8 @@ fn it_works() {
 
     let proj = FlatProjection::new(average_latitude);
 
-    let flat_aachen = proj.to_flat(aachen.0, aachen.1);
-    let flat_meiersberg = proj.to_flat(meiersberg.0, meiersberg.1);
+    let flat_aachen = proj.project(aachen.0, aachen.1);
+    let flat_meiersberg = proj.project(meiersberg.0, meiersberg.1);
 
     let distance = flat_aachen.distance(&flat_meiersberg);
 

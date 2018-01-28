@@ -20,7 +20,7 @@ impl FlatProjection {
         FlatProjection { kx, ky }
     }
 
-    pub fn to_flat(&self, longitude: f64, latitude: f64) -> FlatPoint {
+    pub fn project(&self, longitude: f64, latitude: f64) -> FlatPoint {
         let x = longitude * self.kx;
         let y = latitude * self.ky;
 
