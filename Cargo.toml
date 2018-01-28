@@ -9,6 +9,9 @@ homepage = "https://github.com/Turbo87/flat-projection-rs.git"
 documentation = "https://docs.rs/flat_projection/"
 readme = "README.md"
 
+[badges]
+travis-ci = { repository = "Turbo87/flat-projection-rs", branch = "master" }
+
 [dependencies]
 num-traits = "0.1.42"
 
