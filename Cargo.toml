@@ -4,3 +4,6 @@ version = "0.1.0"
 authors = ["Tobias Bieniek <tobias.bieniek@gmail.com>"]
 
 [dependencies]
+
+[dev-dependencies]
+assert_approx_eq = "1.0.0"
