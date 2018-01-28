@@ -9,6 +9,7 @@ homepage = "https://github.com/Turbo87/flat-projection-rs.git"
 documentation = "https://docs.rs/flat_projection/"
 
 [dependencies]
+num-traits = "0.1.42"
 
 [dev-dependencies]
 assert_approx_eq = "1.0.0"

@@ -15,8 +15,10 @@
 //! ```
 //! # #[macro_use]
 //! # extern crate assert_approx_eq;
+//! # extern crate num_traits;
 //! # extern crate flat_projection;
 //! #
+//! # use num_traits::float::Float;
 //! # use flat_projection::FlatProjection;
 //! #
 //! # fn main() {
@@ -43,6 +45,10 @@
 //! [cheap-ruler]: https://github.com/mapbox/cheap-ruler
 //! [cheap-ruler-cpp]: https://github.com/mapbox/cheap-ruler-cpp
 
+extern crate num_traits;
+
+use num_traits::Float;
+
 /// Projection from [WGS84] to a cartesian coordinate system for fast
 /// geodesic approximations.
 ///
@@ -51,8 +57,10 @@
 /// ```
 /// # #[macro_use]
 /// # extern crate assert_approx_eq;
+/// # extern crate num_traits;
 /// # extern crate flat_projection;
 /// #
+/// # use num_traits::float::Float;
 /// # use flat_projection::FlatProjection;
 /// #
 /// # fn main() {
@@ -71,12 +79,12 @@
 /// # }
 /// ```
 #[derive(Debug, Copy, Clone, PartialEq, PartialOrd)]
-pub struct FlatProjection {
-    kx: f64,
-    ky: f64,
+pub struct FlatProjection<T: Float> {
+    kx: T,
+    ky: T,
 }
 
-impl FlatProjection {
+impl<T: Float> FlatProjection<T> {
     /// Creates a new `FlatProjection` instance that will work best around
     /// the given latitude.
     ///
@@ -85,17 +93,17 @@ impl FlatProjection {
     /// #
     /// let proj = FlatProjection::new(51.);
     /// ```
-    pub fn new(latitude: f64) -> FlatProjection {
+    pub fn new(latitude: T) -> FlatProjection<T> {
         // see https://github.com/mapbox/cheap-ruler/
         let cos = latitude.to_radians().cos();
-        let cos2 = 2. * cos * cos - 1.;
-        let cos3 = 2. * cos * cos2 - cos;
-        let cos4 = 2. * cos * cos3 - cos2;
-        let cos5 = 2. * cos * cos4 - cos3;
+        let cos2 = T::from(2.).unwrap() * cos * cos - T::from(1.).unwrap();
+        let cos3 = T::from(2.).unwrap() * cos * cos2 - cos;
+        let cos4 = T::from(2.).unwrap() * cos * cos3 - cos2;
+        let cos5 = T::from(2.).unwrap() * cos * cos4 - cos3;
 
         // multipliers for converting longitude and latitude degrees into distance (http://1.usa.gov/1Wb1bv7)
-        let kx = 111.41513 * cos - 0.09455 * cos3 + 0.00012 * cos5;
-        let ky = 111.13209 - 0.56605 * cos2 + 0.0012 * cos4;
+        let kx = T::from(111.41513).unwrap() * cos - T::from(0.09455).unwrap() * cos3 + T::from(0.00012).unwrap() * cos5;
+        let ky = T::from(111.13209).unwrap() - T::from(0.56605).unwrap() * cos2 + T::from(0.0012).unwrap() * cos4;
 
         FlatProjection { kx, ky }
     }
@@ -114,7 +122,7 @@ impl FlatProjection {
     ///
     /// let flat_point = proj.project(lon, lat);
     /// ```
-    pub fn project(&self, longitude: f64, latitude: f64) -> FlatPoint {
+    pub fn project(&self, longitude: T, latitude: T) -> FlatPoint<T> {
         let x = longitude * self.kx;
         let y = latitude * self.ky;
 
@@ -137,20 +145,22 @@ impl FlatProjection {
 /// let flat_point = proj.project(lon, lat);
 /// ```
 #[derive(Debug, Copy, Clone, PartialEq, PartialOrd)]
-pub struct FlatPoint {
-    x: f64,
-    y: f64,
+pub struct FlatPoint<T> {
+    x: T,
+    y: T,
 }
 
-impl FlatPoint {
+impl<T: Float> FlatPoint<T> {
     /// Calculates the approximate distance in kilometers from
     /// this `FlatPoint` to another.
     ///
     /// ```
     /// # #[macro_use]
     /// # extern crate assert_approx_eq;
+    /// # extern crate num_traits;
     /// # extern crate flat_projection;
     /// #
+    /// # use num_traits::float::Float;
     /// # use flat_projection::FlatProjection;
     /// #
     /// # fn main() {
@@ -168,7 +178,7 @@ impl FlatPoint {
     /// # assert_approx_eq!(distance, 75.635_595, 0.02);
     /// # }
     /// ```
-    pub fn distance(&self, other: &FlatPoint) -> f64 {
+    pub fn distance(&self, other: &FlatPoint<T>) -> T {
         let (dx, dy) = self.delta(other);
         distance(dx, dy)
     }
@@ -179,8 +189,10 @@ impl FlatPoint {
     /// ```
     /// # #[macro_use]
     /// # extern crate assert_approx_eq;
+    /// # extern crate num_traits;
     /// # extern crate flat_projection;
     /// #
+    /// # use num_traits::float::Float;
     /// # use flat_projection::FlatProjection;
     /// #
     /// # fn main() {
@@ -198,7 +210,7 @@ impl FlatPoint {
     /// # assert_approx_eq!(bearing, 45.312, 0.001);
     /// # }
     /// ```
-    pub fn bearing(&self, other: &FlatPoint) -> f64 {
+    pub fn bearing(&self, other: &FlatPoint<T>) -> T {
         let (dx, dy) = self.delta(other);
         bearing(dx, dy)
     }
@@ -212,8 +224,10 @@ impl FlatPoint {
     /// ```
     /// # #[macro_use]
     /// # extern crate assert_approx_eq;
+    /// # extern crate num_traits;
     /// # extern crate flat_projection;
     /// #
+    /// # use num_traits::float::Float;
     /// # use flat_projection::FlatProjection;
     /// #
     /// # fn main() {
@@ -232,20 +246,20 @@ impl FlatPoint {
     /// # assert_approx_eq!(bearing, 45.312, 0.001);
     /// # }
     /// ```
-    pub fn distance_bearing(&self, other: &FlatPoint) -> (f64, f64) {
+    pub fn distance_bearing(&self, other: &FlatPoint<T>) -> (T, T) {
         let (dx, dy) = self.delta(other);
         (distance(dx, dy), bearing(dx, dy))
     }
 
-    fn delta(&self, other: &FlatPoint) -> (f64, f64) {
+    fn delta(&self, other: &FlatPoint<T>) -> (T, T) {
         (self.x - other.x, self.y - other.y)
     }
 }
 
-fn distance(dx: f64, dy: f64) -> f64 {
+fn distance<T: Float>(dx: T, dy: T) -> T {
     (dx.powi(2) + dy.powi(2)).sqrt()
 }
 
-fn bearing(dx: f64, dy: f64) -> f64 {
+fn bearing<T: Float>(dx: T, dy: T) -> T {
     (-dx).atan2(-dy).to_degrees()
 }
