@@ -1,5 +1,5 @@
 [package]
-name = "flat-projection"
+name = "flat_projection"
 version = "0.1.0"
 authors = ["Tobias Bieniek <tobias.bieniek@gmail.com>"]
 
