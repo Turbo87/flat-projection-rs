@@ -1,3 +1,4 @@
+#[derive(Debug, Copy, Clone, PartialEq, PartialOrd)]
 pub struct FlatProjection {
     kx: f64,
     ky: f64,
@@ -27,7 +28,7 @@ impl FlatProjection {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone, PartialEq, PartialOrd)]
 pub struct FlatPoint {
     x: f64,
     y: f64,
