@@ -1,0 +1,6 @@
+[package]
+name = "flat-projection"
+version = "0.1.0"
+authors = ["Tobias Bieniek <tobias.bieniek@gmail.com>"]
+
+[dependencies]
