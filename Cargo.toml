@@ -7,6 +7,7 @@ license = "MIT"
 repository = "https://github.com/Turbo87/flat-projection-rs.git"
 homepage = "https://github.com/Turbo87/flat-projection-rs.git"
 documentation = "https://docs.rs/flat_projection/"
+readme = "README.md"
 
 [dependencies]
 num-traits = "0.1.42"
