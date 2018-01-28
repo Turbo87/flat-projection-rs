@@ -36,21 +36,22 @@ pub struct FlatPoint {
 
 impl FlatPoint {
     pub fn distance(&self, other: &FlatPoint) -> f64 {
-        let dx = self.x - other.x;
-        let dy = self.y - other.y;
+        let (dx, dy) = self.delta(other);
         distance(dx, dy)
     }
 
     pub fn bearing(&self, other: &FlatPoint) -> f64 {
-        let dx = self.x - other.x;
-        let dy = self.y - other.y;
+        let (dx, dy) = self.delta(other);
         bearing(dx, dy)
     }
 
     pub fn distance_bearing(&self, other: &FlatPoint) -> (f64, f64) {
-        let dx = self.x - other.x;
-        let dy = self.y - other.y;
+        let (dx, dy) = self.delta(other);
         (distance(dx, dy), bearing(dx, dy))
+    }
+
+    fn delta(&self, other: &FlatPoint) -> (f64, f64) {
+        (self.x - other.x, self.y - other.y)
     }
 }
 
