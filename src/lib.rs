@@ -1,5 +1,5 @@
 
-//! Fast geodesic distance calculations via flat surface projection.
+//! Fast geodesic distance approximations via flat surface projection
 //!
 //! The [`FlatProjection`] struct can by used to project geographical
 //! coordinates from [WGS84] into a cartesian coordinate system.
