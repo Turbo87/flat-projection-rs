@@ -38,12 +38,26 @@ impl FlatPoint {
     pub fn distance(&self, other: &FlatPoint) -> f64 {
         let dx = self.x - other.x;
         let dy = self.y - other.y;
-        (dx.powi(2) + dy.powi(2)).sqrt()
+        distance(dx, dy)
     }
 
     pub fn bearing(&self, other: &FlatPoint) -> f64 {
         let dx = self.x - other.x;
         let dy = self.y - other.y;
-        (-dx).atan2(-dy).to_degrees()
+        bearing(dx, dy)
     }
+
+    pub fn distance_bearing(&self, other: &FlatPoint) -> (f64, f64) {
+        let dx = self.x - other.x;
+        let dy = self.y - other.y;
+        (distance(dx, dy), bearing(dx, dy))
+    }
+}
+
+fn distance(dx: f64, dy: f64) -> f64 {
+    (dx.powi(2) + dy.powi(2)).sqrt()
+}
+
+fn bearing(dx: f64, dy: f64) -> f64 {
+    (-dx).atan2(-dy).to_degrees()
 }
