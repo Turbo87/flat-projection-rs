@@ -46,6 +46,7 @@ $ cargo bench
 
 flat                    time:   [329.01 ps 331.10 ps 333.29 ps]
 haversine               time:   [12.244 ns 12.338 ns 12.437 ns]
+vincenty                time:   [262.92 ns 266.14 ns 270.01 ns]
 ```
 
 According to these results the flat surface approximation is about 37x faster
