@@ -179,8 +179,16 @@ impl<T: Float> FlatPoint<T> {
     /// # }
     /// ```
     pub fn distance(&self, other: &FlatPoint<T>) -> T {
+        self.distance_squared(other).sqrt()
+    }
+
+    /// Calculates the approximate squared distance from this `FlatPoint` to
+    /// another.
+    ///
+    /// This method can be used for fast distance comparisons.
+    pub fn distance_squared(&self, other: &FlatPoint<T>) -> T {
         let (dx, dy) = self.delta(other);
-        distance(dx, dy)
+        distance_squared(dx, dy)
     }
 
     /// Calculates the approximate average bearing in degrees
@@ -248,7 +256,7 @@ impl<T: Float> FlatPoint<T> {
     /// ```
     pub fn distance_bearing(&self, other: &FlatPoint<T>) -> (T, T) {
         let (dx, dy) = self.delta(other);
-        (distance(dx, dy), bearing(dx, dy))
+        (distance_squared(dx, dy).sqrt(), bearing(dx, dy))
     }
 
     fn delta(&self, other: &FlatPoint<T>) -> (T, T) {
@@ -256,8 +264,8 @@ impl<T: Float> FlatPoint<T> {
     }
 }
 
-fn distance<T: Float>(dx: T, dy: T) -> T {
-    (dx.powi(2) + dy.powi(2)).sqrt()
+fn distance_squared<T: Float>(dx: T, dy: T) -> T {
+    dx.powi(2) + dy.powi(2)
 }
 
 fn bearing<T: Float>(dx: T, dy: T) -> T {
