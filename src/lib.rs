@@ -128,6 +128,29 @@ impl<T: Float> FlatProjection<T> {
 
         FlatPoint { x, y }
     }
+
+    /// Converts a [`FlatPoint`] back to a (lon, lat) tuple.
+    ///
+    /// [`FlatPoint`]: struct.FlatPoint.html
+    ///
+    /// ```
+    /// # use flat_projection::FlatProjection;
+    /// #
+    /// let (lon, lat) = (6.186389, 50.823194);
+    ///
+    /// let proj = FlatProjection::new(51.);
+    ///
+    /// let flat_point = proj.project(lon, lat);
+    ///
+    /// let result = proj.unproject(&flat_point);
+    ///
+    /// assert_eq!(result.0, lon);
+    ///
+    /// assert_eq!(result.1, lat);
+    /// ```
+    pub fn unproject(&self, p: &FlatPoint<T>) -> (T, T) {
+        (p.x / self.kx, p.y / self.ky)
+    }
 }
 
 /// Representation of a geographical point on Earth as projected
