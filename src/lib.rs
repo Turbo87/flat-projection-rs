@@ -186,7 +186,7 @@ impl<T: Float> FlatProjection<T> {
         self.offset(p, a.cos() * dist, a.sin() * dist)
     }
 
-    /// Returns a new point given easting and northing offsets (in ruler units) from the starting [`FlatPoint`].
+    /// Returns a new [`FlatPoint`] given easting and northing offsets from the starting [`FlatPoint`].
     ///
     /// [`FlatPoint`]: struct.FlatPoint.html
     ///
