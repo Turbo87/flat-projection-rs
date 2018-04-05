@@ -151,6 +151,45 @@ impl<T: Float> FlatProjection<T> {
     pub fn unproject(&self, p: &FlatPoint<T>) -> (T, T) {
         (p.x / self.kx, p.y / self.ky)
     }
+
+    /// Returns a new [`FlatPoint`] given distance and bearing from the starting [`FlatPoint`].
+    ///
+    /// [`FlatPoint`]: struct.FlatPoint.html
+    ///
+    /// ```
+    /// # #[macro_use]
+    /// # extern crate assert_approx_eq;
+    /// # extern crate num_traits;
+    /// # extern crate flat_projection;
+    /// #
+    /// # use num_traits::float::Float;
+    /// # use flat_projection::FlatProjection;
+    /// #
+    /// # fn main() {
+    /// let (lon, lat) = (30.5, 50.5);
+    ///
+    /// let proj = FlatProjection::new(50.);
+    ///
+    /// let flat_point = proj.project(lon, lat);
+    /// let distance = 0.1;
+    /// let dest_flat_point = proj.destination(&flat_point, distance, 90.);
+    /// let res_distance = flat_point.distance(&dest_flat_point);
+    /// let (dest_lon, dest_lat) = proj.unproject(&dest_flat_point);
+    /// #
+    /// # assert_approx_eq!(dest_lon, 30.5013947, 0.00001);
+    /// # assert_approx_eq!(dest_lat, 50.5, 0.00001);
+    /// # assert_approx_eq!(distance, res_distance, 0.00001);
+    /// # }
+    /// ```
+    pub fn destination(&self, p: &FlatPoint<T>, dist: T, bearing: T) -> FlatPoint<T> {
+        let a = (T::from(90.).unwrap() - bearing).to_radians();
+        self.offset(p, a.cos() * dist, a.sin() * dist)
+    }
+
+    pub fn offset(&self, p: &FlatPoint<T>, dx: T, dy: T) -> FlatPoint<T> {
+        let (lon, lat) = self.unproject(p);
+        self.project(lon + dx / self.kx, lat + dy / self.ky)
+    }
 }
 
 /// Representation of a geographical point on Earth as projected
