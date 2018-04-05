@@ -186,6 +186,33 @@ impl<T: Float> FlatProjection<T> {
         self.offset(p, a.cos() * dist, a.sin() * dist)
     }
 
+    /// Returns a new point given easting and northing offsets (in ruler units) from the starting [`FlatPoint`].
+    ///
+    /// [`FlatPoint`]: struct.FlatPoint.html
+    ///
+    /// ```
+    /// # #[macro_use]
+    /// # extern crate assert_approx_eq;
+    /// # extern crate num_traits;
+    /// # extern crate flat_projection;
+    /// #
+    /// # use num_traits::float::Float;
+    /// # use flat_projection::FlatProjection;
+    /// #
+    /// # fn main() {
+    /// let (lon, lat) = (30.5, 50.5);
+    ///
+    /// let proj = FlatProjection::new(50.);
+    ///
+    /// let flat_point = proj.project(lon, lat);
+    /// let distance = 0.1;
+    /// let dest_flat_point = proj.offset(&flat_point, 10., 10.);
+    /// let (dest_lon, dest_lat) = proj.unproject(&dest_flat_point);
+    /// #
+    /// # assert_approx_eq!(dest_lon, 30.6394736, 0.00001);
+    /// # assert_approx_eq!(dest_lat, 50.5899044, 0.00001);
+    /// # }
+    /// ```
     pub fn offset(&self, p: &FlatPoint<T>, dx: T, dy: T) -> FlatPoint<T> {
         let (lon, lat) = self.unproject(p);
         self.project(lon + dx / self.kx, lat + dy / self.ky)
