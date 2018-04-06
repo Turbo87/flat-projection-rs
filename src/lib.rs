@@ -319,12 +319,13 @@ impl<T: Float> FlatPoint<T> {
     /// ```
     pub fn destination(&self, dist: T, bearing: T) -> FlatPoint<T> {
         let a = (T::from(90.).unwrap() - bearing).to_radians();
-        self.offset(a.cos() * dist, a.sin() * dist)
+        FlatPoint {
+            x: self.x + a.cos() * dist,
+            y: self.y + a.sin() * dist,
+        }
     }
 
-    /// Returns a new `FlatPoint` given easting and northing offsets from this `FlatPoint`.
-    ///
-    /// [`FlatPoint`]: struct.FlatPoint.html
+    /// Offsets this `FlatPoint` given easting and northing.
     ///
     /// ```
     /// # #[macro_use]
@@ -340,20 +341,19 @@ impl<T: Float> FlatPoint<T> {
     ///
     /// let proj = FlatProjection::new(50.);
     ///
-    /// let flat_point = proj.project(lon, lat);
+    /// let mut flat_point = proj.project(lon, lat);
     /// let distance = 0.1;
-    /// let dest_flat_point = flat_point.offset(10., 10.);
+    ///
+    /// flat_point.offset(10., 10.);
     /// #
-    /// # let (dest_lon, dest_lat) = proj.unproject(&dest_flat_point);
-    /// # assert_approx_eq!(dest_lon, 30.6394736, 0.00001);
-    /// # assert_approx_eq!(dest_lat, 50.5899044, 0.00001);
+    /// # let (new_lon, new_lat) = proj.unproject(&flat_point);
+    /// # assert_approx_eq!(new_lon, 30.6394736, 0.00001);
+    /// # assert_approx_eq!(new_lat, 50.5899044, 0.00001);
     /// # }
     /// ```
-    pub fn offset(&self, dx: T, dy: T) -> FlatPoint<T> {
-        FlatPoint {
-            x: self.x + dx,
-            y: self.y + dy,
-        }
+    pub fn offset(&mut self, dx: T, dy: T){
+        self.x = self.x + dx;
+        self.y = self.y + dy;
     }
 
 }
