@@ -305,12 +305,12 @@ impl<T: Float> FlatPoint<T> {
     ///
     /// let proj = FlatProjection::new(50.);
     ///
-    /// let flat_point = proj.project(lon, lat);
-    /// let distance = 0.1;
-    /// let dest_flat_point = flat_point.destination(distance, 90.);
+    /// let p1 = proj.project(lon, lat);
+    /// let (distance, bearing) = (0.1, 90.0);
+    /// let p2 = p1.destination(distance, bearing);
     /// #
-    /// # let res_distance = flat_point.distance(&dest_flat_point);
-    /// # let (dest_lon, dest_lat) = proj.unproject(&dest_flat_point);
+    /// # let res_distance = p1.distance(&p2);
+    /// # let (dest_lon, dest_lat) = proj.unproject(&p2);
     /// #
     /// # assert_approx_eq!(dest_lon, 30.5013947, 0.00001);
     /// # assert_approx_eq!(dest_lat, 50.5, 0.00001);
@@ -319,13 +319,10 @@ impl<T: Float> FlatPoint<T> {
     /// ```
     pub fn destination(&self, dist: T, bearing: T) -> FlatPoint<T> {
         let a = (T::from(90.).unwrap() - bearing).to_radians();
-        FlatPoint {
-            x: self.x + a.cos() * dist,
-            y: self.y + a.sin() * dist,
-        }
+        self.offset(a.cos() * dist, a.sin() * dist)
     }
 
-    /// Offsets this `FlatPoint` given easting and northing.
+    /// Returns a new `FlatPoint` given easting and northing offsets from this `FlatPoint`.
     ///
     /// ```
     /// # #[macro_use]
@@ -341,21 +338,20 @@ impl<T: Float> FlatPoint<T> {
     ///
     /// let proj = FlatProjection::new(50.);
     ///
-    /// let mut flat_point = proj.project(lon, lat);
-    /// let distance = 0.1;
-    ///
-    /// flat_point.offset(10., 10.);
+    /// let p1 = proj.project(lon, lat);
+    /// let p2 = p1.offset(10., 10.);
     /// #
-    /// # let (new_lon, new_lat) = proj.unproject(&flat_point);
-    /// # assert_approx_eq!(new_lon, 30.6394736, 0.00001);
-    /// # assert_approx_eq!(new_lat, 50.5899044, 0.00001);
+    /// # let (dest_lon, dest_lat) = proj.unproject(&p2);
+    /// # assert_approx_eq!(dest_lon, 30.6394736, 0.00001);
+    /// # assert_approx_eq!(dest_lat, 50.5899044, 0.00001);
     /// # }
     /// ```
-    pub fn offset(&mut self, dx: T, dy: T){
-        self.x = self.x + dx;
-        self.y = self.y + dy;
+    pub fn offset(&self, dx: T, dy: T) -> FlatPoint<T> {
+        FlatPoint {
+            x: self.x + dx,
+            y: self.y + dy,
+        }
     }
-
 }
 
 fn distance_squared<T: Float>(dx: T, dy: T) -> T {
