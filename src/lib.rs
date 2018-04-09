@@ -288,8 +288,8 @@ impl<T: Float> FlatPoint<T> {
 
     /// Returns a new `FlatPoint` given [`distance`] and [`bearing`] from this `FlatPoint`.
     ///
-    /// [`distance`]: #method.distance
-    /// [`bearing`]: #method.bearing
+    /// [`distance`]: #method.distance (kilometers)
+    /// [`bearing`]: #method.bearing (degrees)
     ///
     /// ```
     /// # #[macro_use]
@@ -306,23 +306,48 @@ impl<T: Float> FlatPoint<T> {
     /// let proj = FlatProjection::new(50.);
     ///
     /// let p1 = proj.project(lon, lat);
-    /// let (distance, bearing) = (0.1, 90.0);
+    /// let (distance, bearing) = (1., 45.0);
     /// let p2 = p1.destination(distance, bearing);
     /// #
     /// # let res_distance = p1.distance(&p2);
     /// # let (dest_lon, dest_lat) = proj.unproject(&p2);
     /// #
-    /// # assert_approx_eq!(dest_lon, 30.5013947, 0.00001);
-    /// # assert_approx_eq!(dest_lat, 50.5, 0.00001);
+    /// # assert_approx_eq!(dest_lon, 30.5098622, 0.00001);
+    /// # assert_approx_eq!(dest_lat, 50.5063572, 0.00001);
+    /// # assert_approx_eq!(distance, res_distance, 0.00001);
+    /// #
+    /// # let bearing = 135.;
+    /// # let p2 = p1.destination(distance, bearing);
+    /// # let res_distance = p1.distance(&p2);
+    /// # let (dest_lon, dest_lat) = proj.unproject(&p2);
+    /// # assert_approx_eq!(dest_lon, 30.5098622, 0.00001);
+    /// # assert_approx_eq!(dest_lat, 50.4936427, 0.00001);
+    /// # assert_approx_eq!(distance, res_distance, 0.00001);
+    /// #
+    /// # let bearing = 225.;
+    /// # let p2 = p1.destination(distance, bearing);
+    /// # let res_distance = p1.distance(&p2);
+    /// # let (dest_lon, dest_lat) = proj.unproject(&p2);
+    /// # assert_approx_eq!(dest_lon, 30.4901377, 0.00001);
+    /// # assert_approx_eq!(dest_lat, 50.4936427, 0.00001);
+    /// # assert_approx_eq!(distance, res_distance, 0.00001);
+    /// #
+    /// # let bearing = 315.;
+    /// # let p2 = p1.destination(distance, bearing);
+    /// # let res_distance = p1.distance(&p2);
+    /// # let (dest_lon, dest_lat) = proj.unproject(&p2);
+    /// # assert_approx_eq!(dest_lon, 30.4901377, 0.00001);
+    /// # assert_approx_eq!(dest_lat, 50.5063572, 0.00001);
     /// # assert_approx_eq!(distance, res_distance, 0.00001);
     /// # }
     /// ```
     pub fn destination(&self, dist: T, bearing: T) -> FlatPoint<T> {
-        let a = (T::from(90.).unwrap() - bearing).to_radians();
-        self.offset(a.cos() * dist, a.sin() * dist)
+        let a = bearing.to_radians();
+        self.offset(a.sin() * dist, a.cos() * dist)
     }
 
-    /// Returns a new `FlatPoint` given easting and northing offsets from this `FlatPoint`.
+    /// Returns a new `FlatPoint` given easting and northing offsets
+    /// (in kilometers) from this `FlatPoint`.
     ///
     /// ```
     /// # #[macro_use]
