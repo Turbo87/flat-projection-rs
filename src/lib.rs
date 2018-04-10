@@ -314,31 +314,6 @@ impl<T: Float> FlatPoint<T> {
     /// #
     /// # assert_approx_eq!(dest_lon, 30.5098622, 0.00001);
     /// # assert_approx_eq!(dest_lat, 50.5063572, 0.00001);
-    /// # assert_approx_eq!(distance, res_distance, 0.00001);
-    /// #
-    /// # let bearing = 135.;
-    /// # let p2 = p1.destination(distance, bearing);
-    /// # let res_distance = p1.distance(&p2);
-    /// # let (dest_lon, dest_lat) = proj.unproject(&p2);
-    /// # assert_approx_eq!(dest_lon, 30.5098622, 0.00001);
-    /// # assert_approx_eq!(dest_lat, 50.4936427, 0.00001);
-    /// # assert_approx_eq!(distance, res_distance, 0.00001);
-    /// #
-    /// # let bearing = 225.;
-    /// # let p2 = p1.destination(distance, bearing);
-    /// # let res_distance = p1.distance(&p2);
-    /// # let (dest_lon, dest_lat) = proj.unproject(&p2);
-    /// # assert_approx_eq!(dest_lon, 30.4901377, 0.00001);
-    /// # assert_approx_eq!(dest_lat, 50.4936427, 0.00001);
-    /// # assert_approx_eq!(distance, res_distance, 0.00001);
-    /// #
-    /// # let bearing = 315.;
-    /// # let p2 = p1.destination(distance, bearing);
-    /// # let res_distance = p1.distance(&p2);
-    /// # let (dest_lon, dest_lat) = proj.unproject(&p2);
-    /// # assert_approx_eq!(dest_lon, 30.4901377, 0.00001);
-    /// # assert_approx_eq!(dest_lat, 50.5063572, 0.00001);
-    /// # assert_approx_eq!(distance, res_distance, 0.00001);
     /// # }
     /// ```
     pub fn destination(&self, dist: T, bearing: T) -> FlatPoint<T> {
@@ -386,3 +361,7 @@ fn distance_squared<T: Float>(dx: T, dy: T) -> T {
 fn bearing<T: Float>(dx: T, dy: T) -> T {
     (-dx).atan2(-dy).to_degrees()
 }
+
+#[cfg(test)]
+#[macro_use] extern crate assert_approx_eq;
+mod tests;
