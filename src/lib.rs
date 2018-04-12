@@ -285,6 +285,73 @@ impl<T: Float> FlatPoint<T> {
     fn delta(&self, other: &FlatPoint<T>) -> (T, T) {
         (self.x - other.x, self.y - other.y)
     }
+
+    /// Returns a new `FlatPoint` given [`distance`] and [`bearing`] from this `FlatPoint`.
+    ///
+    /// [`distance`]: #method.distance (kilometers)
+    /// [`bearing`]: #method.bearing (degrees)
+    ///
+    /// ```
+    /// # #[macro_use]
+    /// # extern crate assert_approx_eq;
+    /// # extern crate num_traits;
+    /// # extern crate flat_projection;
+    /// #
+    /// # use num_traits::float::Float;
+    /// # use flat_projection::FlatProjection;
+    /// #
+    /// # fn main() {
+    /// let (lon, lat) = (30.5, 50.5);
+    ///
+    /// let proj = FlatProjection::new(50.);
+    ///
+    /// let p1 = proj.project(lon, lat);
+    /// let (distance, bearing) = (1., 45.0);
+    /// let p2 = p1.destination(distance, bearing);
+    /// #
+    /// # let res_distance = p1.distance(&p2);
+    /// # let (dest_lon, dest_lat) = proj.unproject(&p2);
+    /// #
+    /// # assert_approx_eq!(dest_lon, 30.5098622, 0.00001);
+    /// # assert_approx_eq!(dest_lat, 50.5063572, 0.00001);
+    /// # }
+    /// ```
+    pub fn destination(&self, dist: T, bearing: T) -> FlatPoint<T> {
+        let a = bearing.to_radians();
+        self.offset(a.sin() * dist, a.cos() * dist)
+    }
+
+    /// Returns a new `FlatPoint` given easting and northing offsets
+    /// (in kilometers) from this `FlatPoint`.
+    ///
+    /// ```
+    /// # #[macro_use]
+    /// # extern crate assert_approx_eq;
+    /// # extern crate num_traits;
+    /// # extern crate flat_projection;
+    /// #
+    /// # use num_traits::float::Float;
+    /// # use flat_projection::FlatProjection;
+    /// #
+    /// # fn main() {
+    /// let (lon, lat) = (30.5, 50.5);
+    ///
+    /// let proj = FlatProjection::new(50.);
+    ///
+    /// let p1 = proj.project(lon, lat);
+    /// let p2 = p1.offset(10., 10.);
+    /// #
+    /// # let (dest_lon, dest_lat) = proj.unproject(&p2);
+    /// # assert_approx_eq!(dest_lon, 30.6394736, 0.00001);
+    /// # assert_approx_eq!(dest_lat, 50.5899044, 0.00001);
+    /// # }
+    /// ```
+    pub fn offset(&self, dx: T, dy: T) -> FlatPoint<T> {
+        FlatPoint {
+            x: self.x + dx,
+            y: self.y + dy,
+        }
+    }
 }
 
 fn distance_squared<T: Float>(dx: T, dy: T) -> T {
@@ -294,3 +361,7 @@ fn distance_squared<T: Float>(dx: T, dy: T) -> T {
 fn bearing<T: Float>(dx: T, dy: T) -> T {
     (-dx).atan2(-dy).to_degrees()
 }
+
+#[cfg(test)]
+#[macro_use] extern crate assert_approx_eq;
+mod tests;
