@@ -17,7 +17,7 @@ num-traits = "0.2.2"
 
 [dev-dependencies]
 assert_approx_eq = "1.0.0"
-criterion = "0.1.2"
+criterion = "0.2.2"
 
 [[bench]]
 name = "distance_benchmark"
