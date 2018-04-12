@@ -44,12 +44,12 @@ Benchmark
 ```
 $ cargo bench
 
-flat                    time:   [329.01 ps 331.10 ps 333.29 ps]
-haversine               time:   [12.244 ns 12.338 ns 12.437 ns]
-vincenty                time:   [262.92 ns 266.14 ns 270.01 ns]
+distance/flat           time:   [22.727 ns 22.955 ns 23.196 ns]
+distance/haversine      time:   [63.349 ns 64.046 ns 64.787 ns]
+distance/vincenty       time:   [358.10 ns 363.16 ns 369.46 ns]
 ```
 
-According to these results the flat surface approximation is about 37x faster
+According to these results the flat surface approximation is about 3x faster
 than the [Haversine] formula.
 
 [Haversine]: https://en.wikipedia.org/wiki/Haversine_formula
