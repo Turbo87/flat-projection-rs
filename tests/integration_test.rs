@@ -12,7 +12,7 @@ fn it_works() {
 
     let average_latitude = (aachen.1 + meiersberg.1) / 2.;
 
-    let proj = FlatProjection::new(average_latitude);
+    let proj = FlatProjection::new(average_latitude, aachen.0);
 
     let flat_aachen = proj.project(aachen.0, aachen.1);
     let flat_meiersberg = proj.project(meiersberg.0, meiersberg.1);
