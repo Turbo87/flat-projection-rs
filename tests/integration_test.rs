@@ -7,12 +7,12 @@ use flat_projection::FlatProjection;
 
 #[test]
 fn it_works() {
-    let aachen = (6.186389, 50.823194);
-    let meiersberg = (6.953333, 51.301389);
+    let aachen = (50.823194, 6.186389);
+    let meiersberg = (51.301389, 6.953333);
 
-    let average_latitude = (aachen.1 + meiersberg.1) / 2.;
+    let average_latitude = (aachen.0 + meiersberg.0) / 2.;
 
-    let proj = FlatProjection::new(average_latitude, aachen.0);
+    let proj = FlatProjection::new(average_latitude, aachen.1);
 
     let flat_aachen = proj.project(aachen.0, aachen.1);
     let flat_meiersberg = proj.project(meiersberg.0, meiersberg.1);

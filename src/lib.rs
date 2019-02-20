@@ -22,13 +22,13 @@
 //! # use flat_projection::FlatProjection;
 //! #
 //! # fn main() {
-//! let (lon1, lat1) = (6.186389, 50.823194);
-//! let (lon2, lat2) = (6.953333, 51.301389);
+//! let (lat1, lon1) = (50.823194, 6.186389);
+//! let (lat2, lon2) = (51.301389, 6.953333);
 //!
-//! let proj = FlatProjection::new(51.05, 0.);
+//! let proj = FlatProjection::new(51.05, 6.);
 //!
-//! let p1 = proj.project(lon1, lat1);
-//! let p2 = proj.project(lon2, lat2);
+//! let p1 = proj.project(lat1, lon1);
+//! let p2 = proj.project(lat2, lon2);
 //!
 //! let distance = p1.distance(&p2);
 //! // -> 75.648 km
@@ -64,13 +64,13 @@ use num_traits::Float;
 /// # use flat_projection::FlatProjection;
 /// #
 /// # fn main() {
-/// let (lon1, lat1) = (6.186389, 50.823194);
-/// let (lon2, lat2) = (6.953333, 51.301389);
+/// let (lat1, lon1) = (50.823194, 6.186389);
+/// let (lat2, lon2) = (51.301389, 6.953333);
 ///
-/// let proj = FlatProjection::new(51.05, 0.);
+/// let proj = FlatProjection::new(51.05, 6.);
 ///
-/// let p1 = proj.project(lon1, lat1);
-/// let p2 = proj.project(lon2, lat2);
+/// let p1 = proj.project(lat1, lon1);
+/// let p2 = proj.project(lat2, lon2);
 ///
 /// let distance = p1.distance(&p2);
 /// // -> 75.648 km
@@ -86,14 +86,14 @@ pub struct FlatProjection<T: Float> {
     lon: T,
 }
 
-impl<T: Float> FlatProjection<T> {
+impl<T: Float + std::fmt::Display> FlatProjection<T> {
     /// Creates a new `FlatProjection` instance that will work best around
     /// the given latitude.
     ///
     /// ```
     /// # use flat_projection::FlatProjection;
     /// #
-    /// let proj = FlatProjection::new(51., 0.);
+    /// let proj = FlatProjection::new(51., 6.);
     /// ```
     pub fn new(latitude: T, longitude: T) -> FlatProjection<T> {
         // see https://github.com/mapbox/cheap-ruler/
@@ -118,13 +118,13 @@ impl<T: Float> FlatProjection<T> {
     /// ```
     /// # use flat_projection::FlatProjection;
     /// #
-    /// let (lon, lat) = (6.186389, 50.823194);
+    /// let (lat, lon) = (50.823194, 6.186389);
     ///
     /// let proj = FlatProjection::new(51., 6.0);
     ///
-    /// let flat_point = proj.project(lon, lat);
+    /// let flat_point = proj.project(lat, lon);
     /// ```
-    pub fn project(&self, longitude: T, latitude: T) -> FlatPoint<T> {
+    pub fn project(&self, latitude: T, longitude: T) -> FlatPoint<T> {
         // Coordinates in the East, North, Up (ENU) frame
         let x = (longitude - self.lon) * self.kx;
         let y = (latitude - self.lat) * self.ky;
@@ -132,27 +132,27 @@ impl<T: Float> FlatProjection<T> {
         FlatPoint { x, y }
     }
 
-    /// Converts a [`FlatPoint`] back to a (lon, lat) tuple.
+    /// Converts a [`FlatPoint`] back to a (lat, lon) tuple.
     ///
     /// [`FlatPoint`]: struct.FlatPoint.html
     ///
     /// ```
     /// # use flat_projection::FlatProjection;
     /// #
-    /// let (lon, lat) = (6.186389, 50.823194);
+    /// let (lat, lon) = (50.823194, 6.186389);
     ///
-    /// let proj = FlatProjection::new(51., 0.);
+    /// let proj = FlatProjection::new(51., 6.);
     ///
-    /// let flat_point = proj.project(lon, lat);
+    /// let flat_point = proj.project(lat, lon);
     ///
     /// let result = proj.unproject(&flat_point);
     ///
-    /// assert_eq!(result.0, lon);
+    /// assert_eq!(result.0, lat);
     ///
-    /// assert_eq!(result.1, lat);
+    /// assert_eq!(result.1, lon);
     /// ```
     pub fn unproject(&self, p: &FlatPoint<T>) -> (T, T) {
-        (p.x / self.kx + self.lon, p.y / self.ky + self.lat)
+        (p.y / self.ky + self.lat, p.x / self.kx + self.lon)
     }
 }
 
@@ -164,11 +164,11 @@ impl<T: Float> FlatProjection<T> {
 /// ```
 /// # use flat_projection::FlatProjection;
 /// #
-/// let (lon, lat) = (6.186389, 50.823194);
+/// let (lat, lon) = (50.823194, 6.186389);
 ///
-/// let proj = FlatProjection::new(51., 0.);
+/// let proj = FlatProjection::new(51., 6.);
 ///
-/// let flat_point = proj.project(lon, lat);
+/// let flat_point = proj.project(lat, lon);
 /// ```
 #[derive(Debug, Copy, Clone, PartialEq, PartialOrd)]
 pub struct FlatPoint<T> {
@@ -194,13 +194,13 @@ impl<T: Float> FlatPoint<T> {
     /// # use flat_projection::FlatProjection;
     /// #
     /// # fn main() {
-    /// let (lon1, lat1) = (6.186389, 50.823194);
-    /// let (lon2, lat2) = (6.953333, 51.301389);
+    /// let (lat1, lon1) = (50.823194, 6.186389);
+    /// let (lat2, lon2) = (51.301389, 6.953333);
     ///
-    /// let proj = FlatProjection::new(51.05, 0.);
+    /// let proj = FlatProjection::new(51.05, 6.);
     ///
-    /// let p1 = proj.project(lon1, lat1);
-    /// let p2 = proj.project(lon2, lat2);
+    /// let p1 = proj.project(lat1, lon1);
+    /// let p2 = proj.project(lat2, lon2);
     ///
     /// let distance = p1.distance(&p2);
     /// // -> 75.648 km
@@ -234,13 +234,13 @@ impl<T: Float> FlatPoint<T> {
     /// # use flat_projection::FlatProjection;
     /// #
     /// # fn main() {
-    /// let (lon1, lat1) = (6.186389, 50.823194);
-    /// let (lon2, lat2) = (6.953333, 51.301389);
+    /// let (lat1, lon1) = (50.823194, 6.186389);
+    /// let (lat2, lon2) = (51.301389, 6.953333);
     ///
-    /// let proj = FlatProjection::new(51.05, 0.);
+    /// let proj = FlatProjection::new(51.05, 6.);
     ///
-    /// let p1 = proj.project(lon1, lat1);
-    /// let p2 = proj.project(lon2, lat2);
+    /// let p1 = proj.project(lat1, lon1);
+    /// let p2 = proj.project(lat2, lon2);
     ///
     /// let bearing = p1.bearing(&p2);
     /// // -> 45.3°
@@ -269,13 +269,13 @@ impl<T: Float> FlatPoint<T> {
     /// # use flat_projection::FlatProjection;
     /// #
     /// # fn main() {
-    /// let (lon1, lat1) = (6.186389, 50.823194);
-    /// let (lon2, lat2) = (6.953333, 51.301389);
+    /// let (lat1, lon1) = (50.823194, 6.186389);
+    /// let (lat2, lon2) = (51.301389, 6.953333);
     ///
-    /// let proj = FlatProjection::new(51.05, 0.);
+    /// let proj = FlatProjection::new(51.05, 6.);
     ///
-    /// let p1 = proj.project(lon1, lat1);
-    /// let p2 = proj.project(lon2, lat2);
+    /// let p1 = proj.project(lat1, lon1);
+    /// let p2 = proj.project(lat2, lon2);
     ///
     /// let (distance, bearing) = p1.distance_bearing(&p2);
     /// // -> 75.648 km and 45.3°
@@ -308,16 +308,16 @@ impl<T: Float> FlatPoint<T> {
     /// # use flat_projection::FlatProjection;
     /// #
     /// # fn main() {
-    /// let (lon, lat) = (30.5, 50.5);
+    /// let (lat, lon) = (50.5, 30.5);
     ///
-    /// let proj = FlatProjection::new(50., 0.);
+    /// let proj = FlatProjection::new(50., 30.);
     ///
-    /// let p1 = proj.project(lon, lat);
+    /// let p1 = proj.project(lat, lon);
     /// let (distance, bearing) = (1., 45.0);
     /// let p2 = p1.destination(distance, bearing);
     /// #
     /// # let res_distance = p1.distance(&p2);
-    /// # let (dest_lon, dest_lat) = proj.unproject(&p2);
+    /// # let (dest_lat, dest_lon) = proj.unproject(&p2);
     /// #
     /// # assert_approx_eq!(dest_lon, 30.5098622, 0.00001);
     /// # assert_approx_eq!(dest_lat, 50.5063572, 0.00001);
@@ -341,14 +341,14 @@ impl<T: Float> FlatPoint<T> {
     /// # use flat_projection::FlatProjection;
     /// #
     /// # fn main() {
-    /// let (lon, lat) = (30.5, 50.5);
+    /// let (lat, lon) = (50.5, 30.5);
     ///
-    /// let proj = FlatProjection::new(50., 0.);
+    /// let proj = FlatProjection::new(50., 30.);
     ///
-    /// let p1 = proj.project(lon, lat);
+    /// let p1 = proj.project(lat, lon);
     /// let p2 = p1.offset(10., 10.);
     /// #
-    /// # let (dest_lon, dest_lat) = proj.unproject(&p2);
+    /// # let (dest_lat, dest_lon) = proj.unproject(&p2);
     /// # assert_approx_eq!(dest_lon, 30.6394736, 0.00001);
     /// # assert_approx_eq!(dest_lat, 50.5899044, 0.00001);
     /// # }
@@ -378,14 +378,14 @@ mod tests {
 
     #[test]
     fn flatpoint_destination_ne() {
-        let (lon, lat) = (30.5, 50.5);
-        let proj = FlatProjection::new(50., 0.);
-        let p1 = proj.project(lon, lat);
+        let (lat, lon) = (50.5, 30.5);
+        let proj = FlatProjection::new(50., 30.);
+        let p1 = proj.project(lat, lon);
 
         let (distance, bearing) = (1., 45.0);
         let p2 = p1.destination(distance, bearing);
         let res_distance = p1.distance(&p2);
-        let (dest_lon, dest_lat) = proj.unproject(&p2);
+        let (dest_lat, dest_lon) = proj.unproject(&p2);
         assert_approx_eq!(dest_lon, 30.5098622, 0.00001);
         assert_approx_eq!(dest_lat, 50.5063572, 0.00001);
         assert_approx_eq!(distance, res_distance, 0.00001);
@@ -393,15 +393,15 @@ mod tests {
 
     #[test]
     fn flatpoint_destination_se() {
-        let (lon, lat) = (30.5, 50.5);
-        let proj = FlatProjection::new(50., 0.);
-        let p1 = proj.project(lon, lat);
+        let (lat, lon) = (50.5, 30.5);
+        let proj = FlatProjection::new(50., 30.);
+        let p1 = proj.project(lat, lon);
 
         let (distance, bearing) = (1., 135.0);
 
         let p2 = p1.destination(distance, bearing);
         let res_distance = p1.distance(&p2);
-        let (dest_lon, dest_lat) = proj.unproject(&p2);
+        let (dest_lat, dest_lon) = proj.unproject(&p2);
         assert_approx_eq!(dest_lon, 30.5098622, 0.00001);
         assert_approx_eq!(dest_lat, 50.4936427, 0.00001);
         assert_approx_eq!(distance, res_distance, 0.00001);
@@ -409,14 +409,14 @@ mod tests {
 
     #[test]
     fn flatpoint_destination_sw() {
-        let (lon, lat) = (30.5, 50.5);
-        let proj = FlatProjection::new(50., 0.);
-        let p1 = proj.project(lon, lat);
+        let (lat, lon) = (50.5, 30.5);
+        let proj = FlatProjection::new(50., 30.);
+        let p1 = proj.project(lat, lon);
 
         let (distance, bearing) = (1., 225.0);
         let p2 = p1.destination(distance, bearing);
         let res_distance = p1.distance(&p2);
-        let (dest_lon, dest_lat) = proj.unproject(&p2);
+        let (dest_lat, dest_lon) = proj.unproject(&p2);
         assert_approx_eq!(dest_lon, 30.4901377, 0.00001);
         assert_approx_eq!(dest_lat, 50.4936427, 0.00001);
         assert_approx_eq!(distance, res_distance, 0.00001);
@@ -424,14 +424,14 @@ mod tests {
 
     #[test]
     fn flatpoint_destination_nw() {
-        let (lon, lat) = (30.5, 50.5);
-        let proj = FlatProjection::new(50., 0.);
-        let p1 = proj.project(lon, lat);
+        let (lat, lon) = (50.5, 30.5);
+        let proj = FlatProjection::new(50., 30.);
+        let p1 = proj.project(lat, lon);
 
         let (distance, bearing) = (1., 315.0);
         let p2 = p1.destination(distance, bearing);
         let res_distance = p1.distance(&p2);
-        let (dest_lon, dest_lat) = proj.unproject(&p2);
+        let (dest_lat, dest_lon) = proj.unproject(&p2);
         assert_approx_eq!(dest_lon, 30.4901377, 0.00001);
         assert_approx_eq!(dest_lat, 50.5063572, 0.00001);
         assert_approx_eq!(distance, res_distance, 0.00001);
