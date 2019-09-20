@@ -1,6 +1,6 @@
 [package]
 name = "flat_projection"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["Tobias Bieniek <tobias.bieniek@gmail.com>"]
 description = "Fast geodesic distance approximations via flat surface projection."
 license = "MIT"
