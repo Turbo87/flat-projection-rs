@@ -159,18 +159,28 @@ impl<T: Float> FlatProjection<T> {
 /// [`FlatProjection`]: struct.FlatProjection.html
 ///
 /// ```
+/// # #[macro_use]
+/// # extern crate assert_approx_eq;
+/// #
 /// # use flat_projection::FlatProjection;
 /// #
+/// # fn main() {
 /// let (lon, lat) = (6.186389, 50.823194);
 ///
 /// let proj = FlatProjection::new(51.);
 ///
 /// let flat_point = proj.project(lon, lat);
+/// #
+/// # assert_approx_eq!(flat_point.x, 434.2847f64, 0.001);
+/// # assert_approx_eq!(flat_point.y, 5654.0133f64, 0.001);
+/// # }
 /// ```
 #[derive(Debug, Copy, Clone, PartialEq, PartialOrd)]
 pub struct FlatPoint<T> {
-    x: T,
-    y: T,
+    /// X-axis component of the flat-surface point in kilometers
+    pub x: T,
+    /// Y-axis component of the flat-surface point in kilometers
+    pub y: T,
 }
 
 impl<T: Float> FlatPoint<T> {
