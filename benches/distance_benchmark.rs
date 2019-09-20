@@ -3,7 +3,7 @@ extern crate criterion;
 extern crate flat_projection;
 
 use std::f64;
-use criterion::{Criterion, Fun};
+use criterion::Criterion;
 use flat_projection::FlatProjection;
 
 const AACHEN: (f64, f64) = (6.186389, 50.823194);
@@ -91,13 +91,15 @@ fn vincenty_distance(p1: (f64, f64), p2: (f64, f64)) -> f64 {
 }
 
 fn criterion_benchmark(c: &mut Criterion) {
-    let flat = Fun::new("flat", |b, &(from, to)| b.iter(|| flat_distance(from, to)));
-    let haversine = Fun::new("haversine", |b, &(from, to)| b.iter(|| haversine_distance(from, to)));
-    let vincenty = Fun::new("vincenty", |b, &(from, to)| b.iter(|| vincenty_distance(from, to)));
+    let input = (AACHEN, MEIERSBERG);
 
-    let distance = vec!(flat, haversine, vincenty);
+    let mut group = c.benchmark_group("distance");
 
-    c.bench_functions("distance", distance, (AACHEN, MEIERSBERG));
+    group.bench_with_input("flat", &input, |b, &(from, to)| b.iter(|| flat_distance(from, to)));
+    group.bench_with_input("haversine", &input, |b, &(from, to)| b.iter(|| haversine_distance(from, to)));
+    group.bench_with_input("vincenty", &input, |b, &(from, to)| b.iter(|| vincenty_distance(from, to)));
+
+    group.finish();
 }
 
 criterion_group!(benches, criterion_benchmark);
