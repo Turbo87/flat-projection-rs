@@ -1,3 +1,8 @@
+branches:
+  only:
+    - master
+    - /^v\d+\.\d+\.\d+/  # version tags
+
 language: rust
 rust:
   - stable
