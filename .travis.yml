@@ -14,3 +14,10 @@ matrix:
     - rust: nightly
 
 cache: cargo
+
+install: skip
+
+script:
+  - cargo build --all
+  - cargo test --all
+  - cargo bench --no-run
