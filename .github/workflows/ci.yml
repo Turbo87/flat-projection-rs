@@ -20,6 +20,13 @@ jobs:
           profile: minimal
           toolchain: 1.46.0
           override: true
+          components: rustfmt
+
+      - name: cargo fmt
+        uses: actions-rs/cargo@v1
+        with:
+            command: fmt
+            args: --all -- --check
 
       - name: cargo build
         uses: actions-rs/cargo@v1
