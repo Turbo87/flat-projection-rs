@@ -1,4 +1,3 @@
-
 //! Fast geodesic distance approximations via flat surface projection
 //!
 //! The [`FlatProjection`] struct can by used to project geographical
@@ -113,10 +112,15 @@ impl<T: Float> FlatProjection<T> {
         let w = w2.sqrt();
 
         // multipliers for converting longitude and latitude degrees into distance
-        let kx = (re * w * cos_lat).to_radians();        // based on normal radius of curvature
-        let ky = (re * w * w2 * (one - e2)).to_radians();  // based on meridional radius of curvature
+        let kx = (re * w * cos_lat).to_radians(); // based on normal radius of curvature
+        let ky = (re * w * w2 * (one - e2)).to_radians(); // based on meridional radius of curvature
 
-        FlatProjection { kx, ky, lat: latitude, lon: longitude }
+        FlatProjection {
+            kx,
+            ky,
+            lat: latitude,
+            lon: longitude,
+        }
     }
 
     /// Converts a longitude and latitude (in degrees) to a [`FlatPoint`]
@@ -383,12 +387,14 @@ fn bearing<T: Float>(dx: T, dy: T) -> T {
     (-dx).atan2(-dy).to_degrees()
 }
 
-#[cfg(test)] #[macro_use] extern crate assert_approx_eq;
+#[cfg(test)]
+#[macro_use]
+extern crate assert_approx_eq;
 
 #[cfg(test)]
 mod tests {
     use num_traits::Float;
-    use ::FlatProjection;
+    use FlatProjection;
 
     #[test]
     fn flatpoint_destination_ne() {
