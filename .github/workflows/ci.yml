@@ -20,7 +20,7 @@ jobs:
           profile: minimal
           toolchain: 1.46.0
           override: true
-          components: rustfmt
+          components: rustfmt, clippy
 
       - name: cargo fmt
         uses: actions-rs/cargo@v1
@@ -39,6 +39,12 @@ jobs:
         with:
           command: test
           args: --all
+
+      - name: cargo clippy
+        uses: actions-rs/cargo@v1
+        with:
+          command: clippy
+          args: -- -D warnings
 
       - name: cargo bench --no-run
         uses: actions-rs/cargo@v1
