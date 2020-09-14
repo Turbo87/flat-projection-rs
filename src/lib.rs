@@ -98,15 +98,23 @@ impl<T: Float> FlatProjection<T> {
     /// ```
     pub fn new(longitude: T, latitude: T) -> FlatProjection<T> {
         // see https://github.com/mapbox/cheap-ruler/
-        let cos = latitude.to_radians().cos();
-        let cos2 = T::from(2.).unwrap() * cos * cos - T::from(1.).unwrap();
-        let cos3 = T::from(2.).unwrap() * cos * cos2 - cos;
-        let cos4 = T::from(2.).unwrap() * cos * cos3 - cos2;
-        let cos5 = T::from(2.).unwrap() * cos * cos4 - cos3;
 
-        // multipliers for converting longitude and latitude degrees into distance (http://1.usa.gov/1Wb1bv7)
-        let kx = T::from(111.41513).unwrap() * cos - T::from(0.09455).unwrap() * cos3 + T::from(0.00012).unwrap() * cos5;
-        let ky = T::from(111.13209).unwrap() - T::from(0.56605).unwrap() * cos2 + T::from(0.0012).unwrap() * cos4;
+        let one = T::one();
+        let two = T::from(2).unwrap();
+
+        // Values that define WGS84 ellipsoid model of the Earth
+        let re: T = T::from(6378.137).unwrap(); // equatorial radius
+        let fe: T = one / T::from(298.257223563).unwrap(); // flattening
+        let e2: T = fe * (two - fe);
+
+        // Curvature formulas from https://en.wikipedia.org/wiki/Earth_radius#Meridional
+        let cos_lat = latitude.to_radians().cos();
+        let w2 = one / (one - e2 * (one - cos_lat * cos_lat));
+        let w = w2.sqrt();
+
+        // multipliers for converting longitude and latitude degrees into distance
+        let kx = (re * w * cos_lat).to_radians();        // based on normal radius of curvature
+        let ky = (re * w * w2 * (one - e2)).to_radians();  // based on meridional radius of curvature
 
         FlatProjection { kx, ky, lat: latitude, lon: longitude }
     }
