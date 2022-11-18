@@ -3,51 +3,43 @@ name: CI
 on:
   push:
     branches:
+      - main
       - master
   pull_request:
-  schedule:
-    - cron: '0 3 * * *' # daily, at 3am
 
 jobs:
-  tests:
-    name: Tests
+  check:
+    name: check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3.0.0
+      - uses: Swatinem/rust-cache@v2.2.0
+      - run: cargo check --workspace --all-targets
+        env:
+          RUSTFLAGS: "-D warnings"
 
-      - uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: 1.65.0
-          override: true
-          components: rustfmt, clippy
+  tests:
+    name: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3.0.0
+      - uses: Swatinem/rust-cache@v2.2.0
+      - run: cargo test --workspace
 
-      - name: cargo fmt
-        uses: actions-rs/cargo@v1
-        with:
-            command: fmt
-            args: --all -- --check
+  fmt:
+    name: rustfmt
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3.0.0
+      - run: rustup component add rustfmt
+      - uses: Swatinem/rust-cache@v2.2.0
+      - run: cargo fmt --all -- --check
 
-      - name: cargo build
-        uses: actions-rs/cargo@v1
-        with:
-          command: build
-          args: --all
-
-      - name: cargo test
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
-          args: --all
-
-      - name: cargo clippy
-        uses: actions-rs/cargo@v1
-        with:
-          command: clippy
-          args: -- -D warnings
-
-      - name: cargo bench --no-run
-        uses: actions-rs/cargo@v1
-        with:
-          command: bench
-          args: --no-run
+  clippy:
+    name: clippy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3.0.0
+      - run: rustup component add clippy
+      - uses: Swatinem/rust-cache@v2.2.0
+      - run: cargo clippy --workspace -- --deny warnings
