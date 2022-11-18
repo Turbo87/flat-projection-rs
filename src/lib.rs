@@ -44,6 +44,8 @@
 //! [cheap-ruler]: https://github.com/mapbox/cheap-ruler
 //! [cheap-ruler-cpp]: https://github.com/mapbox/cheap-ruler-cpp
 
+#![allow(clippy::derive_partial_eq_without_eq)]
+
 extern crate num_traits;
 
 use num_traits::Float;
