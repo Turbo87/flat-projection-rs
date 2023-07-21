@@ -13,7 +13,7 @@ readme = "README.md"
 travis-ci = { repository = "Turbo87/flat-projection-rs", branch = "master" }
 
 [dependencies]
-num-traits = "0.2.15"
+num-traits = "0.2.16"
 
 [dev-dependencies]
 assert_approx_eq = "1.1.0"
