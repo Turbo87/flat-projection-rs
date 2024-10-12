@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3.0.2
-      - uses: Swatinem/rust-cache@v2.2.1
+      - uses: Swatinem/rust-cache@v2.7.5
       - run: cargo check --workspace --all-targets
         env:
           RUSTFLAGS: "-D warnings"
@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3.0.2
-      - uses: Swatinem/rust-cache@v2.2.1
+      - uses: Swatinem/rust-cache@v2.7.5
       - run: cargo test --workspace
 
   fmt:
@@ -32,7 +32,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3.0.2
       - run: rustup component add rustfmt
-      - uses: Swatinem/rust-cache@v2.2.1
+      - uses: Swatinem/rust-cache@v2.7.5
       - run: cargo fmt --all -- --check
 
   clippy:
@@ -41,5 +41,5 @@ jobs:
     steps:
       - uses: actions/checkout@v3.0.2
       - run: rustup component add clippy
-      - uses: Swatinem/rust-cache@v2.2.1
+      - uses: Swatinem/rust-cache@v2.7.5
       - run: cargo clippy --workspace -- --deny warnings
