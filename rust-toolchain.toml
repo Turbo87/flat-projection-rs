@@ -2,4 +2,4 @@
 # This is the "Minimum Supported Rust Version" for this project.
 # Increasing it should be considered a breaking change and requires a new
 # major version release.
-channel = "1.65.0"
+channel = "1.98.1"
